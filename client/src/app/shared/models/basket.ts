@@ -1,4 +1,4 @@
-import { uuid } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface IBasketItem {
     id: number;
@@ -17,6 +17,13 @@ export interface IBasket {
 
 export class Basket implements IBasket
 {
-    id: uuid;
-    items: IBasketItem[];    
+    id= uuidv4();
+    items: IBasketItem[]=[];    
+}
+
+export interface IBasketTotal
+{
+    shipping:number;
+    subTotal:number;
+    total:number;
 }

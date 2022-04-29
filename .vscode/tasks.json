@@ -36,6 +36,25 @@
                 "${workspaceFolder}/API/API.csproj"
             ],
             "problemMatcher": "$msCompile"
-        }
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "isBackground": true,
+            "problemMatcher": {
+              "owner": "typescript",
+              "pattern": "$tsc",
+              "background": {
+                "activeOnStart": true,
+                "beginsPattern": {
+                  "regexp": "(.*?)"
+                },
+                "endsPattern": {
+                  "regexp": "bundle generation complete"
+                }
+              }
+            },
+            "options": {"cwd": "${workspaceFolder}/client"}
+          }
     ]
 }
