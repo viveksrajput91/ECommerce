@@ -41,13 +41,61 @@ export class BasketService {
     return this.basketSource.value;
   }
 
-  addItemToBasket(item:IProduct,quantity=1){
-    
+  addItemToBasket(item:IProduct,quantity=1){    
     const itemToAdd:IBasketItem=this.mapProductItemToBasketItem(item,quantity);    
     var basket=this.getCurrentBasket()??this.createBasket();
     basket.items=this.addOrUpdateItem(basket.items,itemToAdd,quantity);
     this.updateBasket(basket);
     console.log(basket);
+  }
+
+  incrementBasketItem(basketItem:IBasketItem)
+  {
+    const basket=this.getCurrentBasket();
+    const basketItemIndex=basket.items.findIndex(i=>i.id===basketItem.id);
+    basket.items[basketItemIndex].quantity++;
+    this.updateBasket(basket);
+  }
+
+  decrementBasketItem(basketItem:IBasketItem)
+  {
+    const basket=this.getCurrentBasket();
+    const basketItemIndex=basket.items.findIndex(i=>i.id===basketItem.id);
+    if(basket.items[basketItemIndex].quantity > 1)
+    {
+      basket.items[basketItemIndex].quantity--;
+      this.updateBasket(basket);
+    }
+    else
+    {
+      this.removeBasketItem(basketItem);
+    }
+  }
+
+  removeBasketItem(basketItem: IBasketItem) {
+    const basket=this.getCurrentBasket();
+    if(basket.items.some(i=>i.id===basketItem.id))
+    {
+      basket.items=basket.items.filter(i=>i.id !==basketItem.id);
+    }
+    if(basket.items.length > 0)
+    {
+      this.updateBasket(basket)
+    }
+    else
+    {
+      this.deleteBasket(basket);
+    }
+  }
+
+  deleteBasket(basket: IBasket) {
+    this.http.delete(this.baseUrl + "basket?id=" + basket.id).subscribe({
+      next:()=>{
+        this.basketSource.next(null);
+        this.basketTotalSource.next(null);
+        localStorage.removeItem("basket_id");
+      }
+    })
   }
 
   addOrUpdateItem(items: IBasketItem[], itemToAdd: IBasketItem, quantity: number): IBasketItem[] {
