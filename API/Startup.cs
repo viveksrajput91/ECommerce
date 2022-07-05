@@ -4,6 +4,8 @@ using API.Helpers;
 using API.Middleware;
 using API.Extensions;
 using StackExchange.Redis;
+using Infrastructure.Data.Identity;
+
 namespace API
 {
     public class Startup
@@ -21,12 +23,16 @@ namespace API
             services.AddControllers();
             services.AddSwaggerServices();
             services.AddDbContext<StoreContext>(x=>x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppIdentityDbContext>(x=>{
+                x.UseSqlite(_config.GetConnectionString("IdentityConnection"));
+            });
             services.AddSingleton<IConnectionMultiplexer>(p=>{
                 var configuration=ConfigurationOptions.Parse(_config.GetConnectionString("Redis"),true);
                 return ConnectionMultiplexer.Connect(configuration);
             });
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddApplicationServices();
+            services.AddIdentityServices(_config);
             services.AddCors(options=>{
                 options.AddPolicy("CorsPolicy",policy=>{
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
@@ -50,6 +56,8 @@ namespace API
             app.UseStaticFiles();
 
             app.UseCors("CorsPolicy");
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
