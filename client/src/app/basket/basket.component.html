@@ -1,4 +1,6 @@
 <div class="container mt-5">
+    <!-- <a routerLink="/" class="text-dark" style="cursor: pointer;">click me</a> -->
+
     <div *ngIf="(basket$ | async)===null">
         <p>There are no items in the basket</p>
     </div>
@@ -72,9 +74,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6 offset-6">
+                    <div routerLinkActive="router-link-active"  class="col-6 offset-6">
                         <app-order-total></app-order-total>
-                        <a routerLink="/checkout" class="btn btn-outline-primary py-2 btn-block">
+                        <a [routerLink]="['/checkout']" style="cursor: pointer;">
                             Proceed to checkout
                         </a>                    
                     </div>

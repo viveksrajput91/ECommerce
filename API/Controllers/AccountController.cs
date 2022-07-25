@@ -36,6 +36,7 @@ namespace API.Controllers
                 Email=user.Email,
                 Token=_tokenService.CreateToken(user)
             };
+            
         }
 
         [HttpGet("emailexists")]

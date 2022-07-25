@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +13,8 @@ import { HomeModule } from './home/home.module';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { SpinnerInterceptor } from './core/interceptors/spinner.interceptor';
+import { AccountModule } from './account/account.module';
+import { BasketModule } from './basket/basket.module';
 
 @NgModule({
   declarations: [
@@ -25,12 +27,14 @@ import { SpinnerInterceptor } from './core/interceptors/spinner.interceptor';
     HttpClientModule,
     CoreModule,        
     HomeModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    BasketModule
   ],
   providers: [
     {provide:HTTP_INTERCEPTORS,useClass:ErrorInterceptor,multi:true},
     {provide:HTTP_INTERCEPTORS,useClass:SpinnerInterceptor,multi:true}
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas:[CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }
