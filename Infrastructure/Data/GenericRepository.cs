@@ -45,6 +45,22 @@ namespace Infrastructure.Data
         private IQueryable<T> ApplySpecification(ISpecification<T> specification)
         {
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(),specification);
-        }        
+        }
+
+        public void Add(T entity)
+        {
+           _context.Set<T>().Add(entity);
+        }
+
+        public void Update(T entity)
+        {
+            _context.Set<T>().Attach(entity);
+            _context.Entry(entity).State=EntityState.Detached;
+        }
+
+        public void Delete(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+        }
     }
 }

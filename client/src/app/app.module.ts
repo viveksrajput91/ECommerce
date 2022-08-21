@@ -15,6 +15,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { SpinnerInterceptor } from './core/interceptors/spinner.interceptor';
 import { AccountModule } from './account/account.module';
 import { BasketModule } from './basket/basket.module';
+import { CheckoutModule } from './checkout/checkout.module';
+import { JWTInterceptor } from './core/interceptors/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -28,11 +30,13 @@ import { BasketModule } from './basket/basket.module';
     CoreModule,        
     HomeModule,
     NgxSpinnerModule,
-    BasketModule
+    BasketModule,
+    CheckoutModule
   ],
   providers: [
     {provide:HTTP_INTERCEPTORS,useClass:ErrorInterceptor,multi:true},
-    {provide:HTTP_INTERCEPTORS,useClass:SpinnerInterceptor,multi:true}
+    {provide:HTTP_INTERCEPTORS,useClass:SpinnerInterceptor,multi:true},
+    {provide:HTTP_INTERCEPTORS,useClass:JWTInterceptor,multi:true}
   ],
   bootstrap: [AppComponent],
   schemas:[CUSTOM_ELEMENTS_SCHEMA]
