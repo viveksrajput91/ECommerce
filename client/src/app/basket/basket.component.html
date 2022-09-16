@@ -13,12 +13,17 @@
                         (increment)="incrementBasketItem($event)"
                         (decrement)="decrementBasketItem($event)"
                         (remove)="removeItemFromBasket($event)"
+                        [items]="(basket$ | async).items"
                         ></app-basket-summary>
                     </div>
                 </div>
                 <div class="row">
                     <div routerLinkActive="router-link-active"  class="col-6 offset-6">
-                        <app-order-total></app-order-total>
+                        <app-order-total
+                        [shippingPrice]="(basketTotal$ | async).shipping"
+                        [subTotal]="(basketTotal$ | async).subTotal"
+                        [total]="(basketTotal$ | async).total"
+                        ></app-order-total>
                         <a [routerLink]="['/checkout']" style="cursor: pointer;">
                             Proceed to checkout
                         </a>                    

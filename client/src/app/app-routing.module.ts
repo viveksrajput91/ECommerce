@@ -10,6 +10,8 @@ import { NotFoundComponent } from './core/not-found/not-found.component';
 import { ServerErrorComponent } from './core/server-error/server-error.component';
 import { TestErrorComponent } from './core/test-error/test-error.component';
 import { HomeComponent } from './home/home.component';
+import { OrderDetailedComponent } from './order/order-detailed/order-detailed.component';
+import { OrderListComponent } from './order/order-list/order-list.component';
 import { ProductDetailsComponent } from './shop/product-details/product-details.component';
 import { ShopComponent } from './shop/shop.component';
 
@@ -29,7 +31,10 @@ const routes: Routes = [
   //{path:"account",loadChildren:()=>import("./account/account.module").then(module=>module.AccountModule),data:{breadcrumb:{skip:true}}},
    {path:"account/login",component:LoginComponent},
    {path:"account/register",component:RegisterComponent},
-  {path:'**',redirectTo:'not-found'}
+   {path:'orders',component:OrderListComponent,data:{breadcrumb:'Order'}},
+   {path:'order/:id',component:OrderDetailedComponent,data:{breadcrumb:{alias : 'orderDetailed'}}},
+   //{path:'orders', canActivate:[AuthGuard], loadChildren:()=>import("./order/order.module").then(module=>module.OrderModule),data:{breadcrumb:'Order'}},
+   {path:'**',redirectTo:'not-found'}
 ];
 
 @NgModule({

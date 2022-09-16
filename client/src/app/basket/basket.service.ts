@@ -17,20 +17,35 @@ export class BasketService {
   basket$=this.basketSource.asObservable();
   private basketTotalSource=new BehaviorSubject<IBasketTotal>(null);
   basketTotal$=this.basketTotalSource.asObservable();
-  shippingPrice =0;
+  shippingPrice = 0;
 
   constructor(private http:HttpClient) { }
+
+  createPaymentIntent()
+  {
+    return this.http.post(this.baseUrl + `payments/${this.getCurrentBasket().id}`,{}).pipe(
+      map((basket:IBasket)=>{
+        this.basketSource.next(basket);
+        console.log(this.getCurrentBasket());
+      })
+    );
+  }
 
   updateShippingPrice(deliveryMethod:IDeliveryMethod)
   {
     this.shippingPrice=deliveryMethod.price;
+    const basket = this.getCurrentBasket();
+    basket.deliveryMethodId=deliveryMethod.id;
+    basket.shippingPrice=deliveryMethod.price;
     this.calculateBasketTotal();
+    this.updateBasket(basket);
   }
 
   getBasket(id:string)
   {
     return this.http.get(this.baseUrl + 'basket?id=' + id).pipe(map((basket:IBasket)=>{
       this.basketSource.next(basket);
+      this.shippingPrice = basket.shippingPrice;
       this.calculateBasketTotal();
     }))
   }
@@ -56,6 +71,7 @@ export class BasketService {
     basket.items=this.addOrUpdateItem(basket.items,itemToAdd,quantity);
     this.updateBasket(basket);
     console.log(basket);
+    console.log(this.shippingPrice);
   }
 
   incrementBasketItem(basketItem:IBasketItem)
@@ -82,34 +98,44 @@ export class BasketService {
   }
 
   removeBasketItem(basketItem: IBasketItem) {
+    console.log('hit remove basket');
     const basket=this.getCurrentBasket();
     if(basket.items.some(i=>i.id===basketItem.id))
     {
       basket.items=basket.items.filter(i=>i.id !==basketItem.id);
     }
     if(basket.items.length > 0)
-    {
+    {      
       this.updateBasket(basket)
     }
     else
     {
       this.deleteBasket(basket);
     }
+    console.log(`Basket Length is ${basket.items.length}`);
   }
 
   deleteLocalBasket()
   {
     this.basketSource.next(null);
     this.basketTotalSource.next(null);
+    this.shippingPrice=0;
     localStorage.removeItem('basket_id');
   }
 
   deleteBasket(basket: IBasket) {
     this.http.delete(this.baseUrl + "basket?id=" + basket.id).subscribe({
       next:()=>{
+      console.log('basket removed');
+      
         this.basketSource.next(null);
         this.basketTotalSource.next(null);
+        this.shippingPrice=0;
         localStorage.removeItem("basket_id");
+      },
+      error:(error)=>{
+        console.log(error);
+        
       }
     })
   }
@@ -138,7 +164,7 @@ export class BasketService {
   {
     const basket=this.getCurrentBasket();
     const shipping=this.shippingPrice;
-    const subTotal=basket.items.reduce((a,b)=>(b.quantity*b.price) +a,0);
+    const subTotal=basket.items.reduce((a,b)=>(b.quantity*b.price) + a,0);
     const total=shipping + subTotal;
     this.basketTotalSource.next({shipping,subTotal,total});
   }

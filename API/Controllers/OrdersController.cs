@@ -18,11 +18,13 @@ namespace API.Controllers
     {
         private readonly IOrderService orderService;
         private readonly IMapper mapper;
+        private readonly ILogger<OrdersController> logger;
 
-        public OrdersController(IOrderService orderService,IMapper mapper)
+        public OrdersController(IOrderService orderService,IMapper mapper,ILogger<OrdersController> logger)
         {
             this.orderService = orderService;
             this.mapper = mapper;
+            this.logger = logger;
         }
         [HttpPost]
         public async Task<ActionResult<OrderToReturnDto>> CreateOrderAsync(OrderDto orderDto)
@@ -42,6 +44,7 @@ namespace API.Controllers
         {
             var buyerEmail= HttpContext.User.GetUserEmailFromClaimsPrincipal();
             var order = await orderService.GetOrdersForUserAsync(buyerEmail);
+            logger.LogInformation("Orders",order);
             return Ok(mapper.Map<IReadOnlyList<Order>,IReadOnlyList<OrderToReturnDto>>(order));
         }
 
